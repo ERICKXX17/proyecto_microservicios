@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usuarios - Microservicio</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        h1 { text-align: center; color: #333; }
+        table { width: 80%; margin: 0 auto; border-collapse: collapse; }
+        th, td { padding: 10px; text-align: left; border: 1px solid #ddd; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h1>Usuarios Registrados</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+        <tbody id="userTableBody">
+            <!-- Los datos de los usuarios serán insertados aquí -->
+        </tbody>
+    </table>
+
+    <script>
+        // Llamada a la API para obtener los datos de los usuarios
+        fetch('/lista-usuarios')
+            .then(response => response.json())
+            .then(data => {
+                const userTableBody = document.getElementById('userTableBody');
+                data.data.users.forEach(user => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${user.id_user}</td>
+                        <td>${user.nombre_user}</td>
+                        <td>${user.email_user}</td>
+                    `;
+                    userTableBody.appendChild(row);
+                });
+            })
+            .catch(error => console.error('Error al cargar los usuarios:', error));
+    </script>
+</body>
+</html>

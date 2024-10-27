@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo de Productos</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+        h1 { text-align: center; color: #333; }
+        .catalogo { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; }
+        .producto { border: 1px solid #ddd; border-radius: 8px; padding: 10px; width: 200px; text-align: center; }
+        .producto img { width: 100%; height: auto; border-radius: 8px; }
+        .producto h2 { font-size: 18px; color: #333; }
+        .producto p { font-size: 16px; color: #666; }
+    </style>
+</head>
+<body>
+    <h1>Catálogo de Productos</h1>
+    <div class="catalogo" id="catalogo">
+        <!-- Los productos se insertarán aquí -->
+    </div>
+
+    <script>
+        // Función para convertir el BLOB a una imagen en base64 y mostrar los productos
+        fetch('/lista-productos')
+            .then(response => response.json())
+            .then(data => {
+                const catalogo = document.getElementById('catalogo');
+                data.data.products.forEach(product => {
+                    const productoDiv = document.createElement('div');
+                    productoDiv.classList.add('producto');
+
+                    // Crear una imagen en base64 para el blob
+                    const imgSrc = `data:image/jpeg;base64,${btoa(
+                        new Uint8Array(product.img_prod.data).reduce((data, byte) => data + String.fromCharCode(byte), '')
+                    )}`;
+
+                    productoDiv.innerHTML = `
+                        <img src="${imgSrc}" alt="${product.name_prod}">
+                        <h2>${product.name_prod}</h2>
+                        <p>Precio: $${product.price_prod}</p>
+                    `;
+                    catalogo.appendChild(productoDiv);
+                });
+            })
+            .catch(error => console.error('Error al cargar los productos:', error));
+    </script>
+</body>
+</html>
